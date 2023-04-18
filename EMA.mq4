@@ -83,14 +83,15 @@ void CheckForOpen()
    if(Volume[0]>1) return;
 //--- get Moving Average    
    ma=iMA(NULL,0,MovingPeriod,MovingShift,MODE_EMA,PRICE_CLOSE,0);
+   maConfirmed=iMA(NULL,0,MovingPeriodConfirm,MovingShift,MODE_EMA,PRICE_CLOSE,0);
 //--- sell conditions
-   if(Open[1]>ma && Close[1]<ma)
+   if(Open[1]>ma && Close[1]<ma && Close[1] < maConfirmed)
      {
       res=OrderSend(Symbol(),OP_SELL,LotsOptimized(),Bid,3,0,0,"",MAGICMA,0,Red);
       return;
      }
 //--- buy conditions
-   if(Open[1]<ma && Close[1]>ma)
+   if(Open[1]<ma && Close[1]>ma && Close[1] > maConfirmed)
      {
       res=OrderSend(Symbol(),OP_BUY,LotsOptimized(),Ask,3,0,0,"",MAGICMA,0,Blue);
       return;
