@@ -144,7 +144,7 @@ void OnTick()
       return;
 //--- calculate open orders by current symbol
    if(CalculateCurrentOrders(Symbol())==0) CheckForOpen();
-   else                                    CheckForClose();
+   // else                                    CheckForClose();
 //---
   }
 //+------------------------------------------------------------------+
