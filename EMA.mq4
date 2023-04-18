@@ -77,7 +77,7 @@ double LotsOptimized()
 //+------------------------------------------------------------------+
 void CheckForOpen()
   {
-   double ma;
+   double ma,maConfirmed;
    int    res;
 //--- go trading only for first tiks of new bar
    if(Volume[0]>1) return;
