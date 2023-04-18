@@ -19,6 +19,7 @@ input int    MovingPeriod2  =15;
 input int    MovingPeriod3  =24;
 input int    MovingPeriodConfirm  =200;
 input int    MovingShift   =6;
+input double    RiskRewardRatio   =1.5;
 //+------------------------------------------------------------------+
 //| Calculate open positions                                         |
 //+------------------------------------------------------------------+
@@ -77,23 +78,27 @@ double LotsOptimized()
 //+------------------------------------------------------------------+
 void CheckForOpen()
   {
-   double ma,maConfirmed;
+   double ma,ma3,maConfirmed,range;
    int    res;
 //--- go trading only for first tiks of new bar
    if(Volume[0]>1) return;
 //--- get Moving Average    
-   ma=iMA(NULL,0,MovingPeriod,MovingShift,MODE_EMA,PRICE_CLOSE,0);
+   ma=iMA(NULL,0,MovingPeriod,MovingShift,MODE_EMA,PRICE_CLOSE,0);   
+   ma3=iMA(NULL,0,MovingPeriod3,MovingShift,MODE_EMA,PRICE_CLOSE,0);
    maConfirmed=iMA(NULL,0,MovingPeriodConfirm,MovingShift,MODE_EMA,PRICE_CLOSE,0);
+   
+
+   range = MathAbs(Close[1]-ma3);
 //--- sell conditions
    if(Open[1]>ma && Close[1]<ma && Close[1] < maConfirmed)
      {
-      res=OrderSend(Symbol(),OP_SELL,LotsOptimized(),Bid,3,0,0,"",MAGICMA,0,Red);
+      res=OrderSend(Symbol(),OP_SELL,LotsOptimized(),Bid,3,Close[1]+range,Close[1]-range*RiskRewardRatio,"",MAGICMA,0,Red);
       return;
      }
 //--- buy conditions
    if(Open[1]<ma && Close[1]>ma && Close[1] > maConfirmed)
      {
-      res=OrderSend(Symbol(),OP_BUY,LotsOptimized(),Ask,3,0,0,"",MAGICMA,0,Blue);
+      res=OrderSend(Symbol(),OP_BUY,LotsOptimized(),Ask,3,Close[1]-range,Close[1]+range*RiskRewardRatio,"",MAGICMA,0,Blue);
       return;
      }
 //---
