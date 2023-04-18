@@ -6,7 +6,7 @@
 ## Todo
 - Enter with BUY/SELL STOP (นับถอยหลัง 5 แท่ง)
 - filter with beatiful 3 lines
-- set TP and SL with risk reward ratio
+- set TP and SL with risk reward ratio 1:1.5
 
 ## Done
 - Enter when cross EMA 8 (temporary)
