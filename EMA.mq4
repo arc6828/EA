@@ -49,28 +49,28 @@ double LotsOptimized()
    int    orders=HistoryTotal();     // history orders total
    int    losses=0;                  // number of losses orders without a break
 //--- select lot size
-   lot=NormalizeDouble(AccountFreeMargin()*MaximumRisk/1000.0,1);
+   lot=NormalizeDouble(AccountBalance()/MaximumRisk/1000000.0,2);
 //--- calcuulate number of losses orders without a break
-   if(DecreaseFactor>0)
-     {
-      for(int i=orders-1;i>=0;i--)
-        {
-         if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false)
-           {
-            Print("Error in history!");
-            break;
-           }
-         if(OrderSymbol()!=Symbol() || OrderType()>OP_SELL)
-            continue;
-         //---
-         if(OrderProfit()>0) break;
-         if(OrderProfit()<0) losses++;
-        }
-      if(losses>1)
-         lot=NormalizeDouble(lot-lot*losses/DecreaseFactor,1);
-     }
+   // if(DecreaseFactor>0)
+   //   {
+   //    for(int i=orders-1;i>=0;i--)
+   //      {
+   //       if(OrderSelect(i,SELECT_BY_POS,MODE_HISTORY)==false)
+   //         {
+   //          Print("Error in history!");
+   //          break;
+   //         }
+   //       if(OrderSymbol()!=Symbol() || OrderType()>OP_SELL)
+   //          continue;
+   //       //---
+   //       if(OrderProfit()>0) break;
+   //       if(OrderProfit()<0) losses++;
+   //      }
+   //    if(losses>1)
+   //       lot=NormalizeDouble(lot-lot*losses/DecreaseFactor,1);
+   //   }
 //--- return lot size
-   if(lot<0.1) lot=0.1;
+   if(lot<0.01) lot=0.01;
    return(lot);
   }
 //+------------------------------------------------------------------+
@@ -78,25 +78,26 @@ double LotsOptimized()
 //+------------------------------------------------------------------+
 void CheckForOpen()
   {
-   double ma,ma3,maConfirmed,range;
+   double ma,ma2,ma3,maConfirmed,range;
    int    res;
 //--- go trading only for first tiks of new bar
    if(Volume[0]>1) return;
 //--- get Moving Average    
    ma=iMA(NULL,0,MovingPeriod,MovingShift,MODE_EMA,PRICE_CLOSE,0);   
+   ma2=iMA(NULL,0,MovingPeriod2,MovingShift,MODE_EMA,PRICE_CLOSE,0);
    ma3=iMA(NULL,0,MovingPeriod3,MovingShift,MODE_EMA,PRICE_CLOSE,0);
    maConfirmed=iMA(NULL,0,MovingPeriodConfirm,MovingShift,MODE_EMA,PRICE_CLOSE,0);
    
 
    range = MathAbs(Close[1]-ma3);
 //--- sell conditions
-   if(Open[1]>ma && Close[1]<ma && Close[1] < maConfirmed)
+   if(Open[1]>ma && Close[1]<ma && ma < ma2 && ma2 < maConfirmed)
      {
       res=OrderSend(Symbol(),OP_SELL,LotsOptimized(),Bid,3,Close[1]+range,Close[1]-range*RiskRewardRatio,"",MAGICMA,0,Red);
       return;
      }
 //--- buy conditions
-   if(Open[1]<ma && Close[1]>ma && Close[1] > maConfirmed)
+   if(Open[1]<ma && Close[1]>ma &&  ma > ma2 && ma2 > maConfirmed)
      {
       res=OrderSend(Symbol(),OP_BUY,LotsOptimized(),Ask,3,Close[1]-range,Close[1]+range*RiskRewardRatio,"",MAGICMA,0,Blue);
       return;
