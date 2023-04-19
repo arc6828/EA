@@ -4,11 +4,11 @@
 <img src="./images/341150821_1259974961279584_6952802642499015978_n.jpg" height="400">
 
 ## Todo
-- Enter with BUY/SELL STOP (นับถอยหลัง 5 แท่ง)
 - filter with beatiful 3 lines
+- calculate lot size with limited risk
 
 ## Done
-- Enter when cross EMA 8 (temporary)
-- input with EMA and Lots
+- Enter when cross EMA 8 
+- input with EMA and Lots (temporary)
 - filter with EMA 200
 - set TP and SL with risk reward ratio 1:1.5
